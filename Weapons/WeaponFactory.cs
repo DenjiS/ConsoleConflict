@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ConsoleConflict.Weapons
 {
@@ -15,9 +16,12 @@ namespace ConsoleConflict.Weapons
             _types["tank gun"]       = new WeaponConfig(150, 1);
         }
 
-        public IWeapon Get(string type)
+        public IAttackStrategy Get(string type)
         {
-            return new Weapon(_types[type].Damage, _types[type].BulletsCapacity, _types[type].IsAutomatic);
+            if (_types.ContainsKey(type))
+                return new WeaponAttack(_types[type].Damage, _types[type].BulletsCapacity, _types[type].IsAutomatic);
+            else
+                throw new ArgumentException();
         }
     }
 }

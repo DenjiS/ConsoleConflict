@@ -1,11 +1,11 @@
 ﻿namespace ConsoleConflict.Units
 {
-    internal interface IDamageble
+    internal interface IHealthStrategy
     {
         public int MaxHealth { get; }
 
         public int Health { get; }
 
-        public void GetDamage(int damage);
+        public void TakeDamage(int damage);
     }
 }

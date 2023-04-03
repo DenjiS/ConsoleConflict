@@ -1,19 +1,24 @@
 ﻿using ConsoleConflict.Weapons;
+using System;
 using System.Collections.Generic;
 
 namespace ConsoleConflict.Units.Composites.Tanks
 {
-    internal class Tank : Composite, IDamageble
+    internal class Tank : Composite, IHealthStrategy
     {
-        private int _mass;
-        private readonly List<IUnitComposite> _parentList;
-        private Health _health;
+        private readonly int _mass;
+        private readonly Health _health;
+        private readonly IAttackStrategy _weapon;
 
-        public Tank(int health, int capacity, int mass, IWeapon weapon, List<IUnitComposite> units, List<IUnitComposite> parentList) : base(capacity, units)
+        public Tank(int health, int capacity, int mass, IAttackStrategy weapon, List<IUnitComposite> parentComposite) : base(capacity, parentComposite)
         {
             _mass = mass;
             _health = new Health(health);
-            _parentList = parentList;
+
+            if (weapon != null)
+                _weapon = weapon;
+            else
+                throw new ArgumentNullException(nameof(weapon));
         }
 
         public int MaxHealth => _health.Max;
@@ -22,7 +27,9 @@ namespace ConsoleConflict.Units.Composites.Tanks
 
         public override int UnitsAmount => base.UnitsAmount + _mass;
 
-        public void GetDamage(int damage)
+        public override void Attack(IUnitComposite enemy) => _weapon.Attack(enemy);
+
+        public void TakeDamage(int damage)
         {
             _health.Amount -= damage;
 
@@ -32,8 +39,8 @@ namespace ConsoleConflict.Units.Composites.Tanks
 
         protected override void Die()
         {
-            _parentList.AddRange(Units);
-            _parentList.Remove(this);
+            ParentComposite.AddRange(Units);
+            base.Die();
         }
     }
 }

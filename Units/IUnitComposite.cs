@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using ConsoleConflict.Weapons;
+using System.Collections.Generic;
 
 namespace ConsoleConflict.Units
 {
-    internal interface IUnitComposite
+    internal interface IUnitComposite : IAttackStrategy
     {
         public IReadOnlyList<IUnitComposite> Units { get; }
 
         public int UnitsAmount => 1;
-
-        public void Attack(IUnitComposite enemy);
     }
 }

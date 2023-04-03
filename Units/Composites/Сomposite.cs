@@ -3,21 +3,16 @@ using System.Collections.Generic;
 
 namespace ConsoleConflict.Units.Composites
 {
-    internal abstract class Composite : IUnitComposite
+    internal abstract class Composite : Unit
     {
-        private List<IUnitComposite> _units = new();
-
-        public Composite(int capacity, List<IUnitComposite> units)
+        public Composite(int capacity, List<IUnitComposite> parentComposite) : base(parentComposite)
         {
-            _units = units;
             Capacity = capacity;
         }
 
-        public IReadOnlyList<IUnitComposite> Units => _units;
-
         public int Capacity { get; }
 
-        public virtual int UnitsAmount
+        public override int UnitsAmount
         {
             get
             {
@@ -35,23 +30,21 @@ namespace ConsoleConflict.Units.Composites
             if (UnitsAmount + unit.UnitsAmount > Capacity)
                 throw new ArgumentException(nameof(unit));
             else
-                _units.Add(unit);
+                ChangableUnits.Add(unit);
         }
 
         public void Remove(IUnitComposite unit)
         {
-            _units.Remove(unit);
+            ChangableUnits.Remove(unit);
 
-            if (_units.Count == 0)
+            if (Units.Count == 0)
                 GlobalKiller.Dead += Die;
         }
 
-        public virtual void Attack(IUnitComposite enemy)
+        public override void Attack(IUnitComposite enemy)
         {
-            foreach (var unit in _units)
+            foreach (var unit in Units)
                 unit.Attack(enemy);
         }
-
-        protected abstract void Die();
     }
 }

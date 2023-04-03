@@ -4,6 +4,6 @@ namespace ConsoleConflict.Units.Composites
 {
     internal class Army : Composite
     {
-        public Army() : base(int.MaxValue, new List<IUnitComposite>()) { }
+        public Army(List<IUnitComposite> battlefield) : base(int.MaxValue, battlefield) { }
     }
 }
