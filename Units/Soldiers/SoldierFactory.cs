@@ -1,29 +1,37 @@
-﻿using System;
+﻿using ConsoleConflict.Common.Units;
+using ConsoleConflict.Common.Weapons;
+using System;
 using System.Collections.Generic;
-using ConsoleConflict.Weapons;
 
 namespace ConsoleConflict.Units.Soldiers
 {
-    internal class SoldierFactory : IUnitFactory<Soldier>
+    public enum SoldierTypes
     {
-        private readonly Dictionary<string, SoldierConfig> _types = new();
-        private readonly WeaponFactory _weaponFactory = new();
+        Trooper,
+        Scout,
+        Mechanic
+    }
+
+    internal class SoldierFactory : DamagebleUnitFactory<Soldier, SoldierTypes>
+    {
+        private readonly Dictionary<SoldierTypes, SoldierConfig> _configurations = new();
 
         public SoldierFactory()
         {
-            _types["trooper"] = new SoldierConfig(100, _weaponFactory.Get("автомат"));
-            _types["scout"] = new SoldierConfig();
+            _configurations[SoldierTypes.Trooper] = new SoldierConfig(150, WeaponTypes.Riffle);
+            _configurations[SoldierTypes.Scout] = new SoldierConfig(100, WeaponTypes.SniperRiffle);
+
+            _configurations[SoldierTypes.Mechanic] = new SoldierConfig(50, WeaponTypes.Handgun);
         }
 
-        public Soldier Get(string specialization, List<IUnitComposite> parentList)
+        public override Soldier Get(SoldierTypes specialization)
         {
-            int health = _types[specialization].Health;
-            IAttackStrategy weapon = _types[specialization].Weapon;
+            WeaponTypes weaponType = _configurations[specialization].Weapon;
 
-            if (_types.ContainsKey(specialization))
-                return new Soldier(health, weapon, parentList);
-            else
-                throw new ArgumentException();
+            int health = _configurations[specialization].Health;
+            IWeaponStrategy weapon = GunFactory.Get(weaponType);
+
+            return new Soldier(health, weapon);
         }
     }
 }

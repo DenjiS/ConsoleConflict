@@ -1,15 +1,16 @@
-﻿using ConsoleConflict.Weapons;
+﻿using ConsoleConflict.Common.Health;
+using ConsoleConflict.Common.Units;
+using ConsoleConflict.Common.Weapons;
 using System;
-using System.Collections.Generic;
 
 namespace ConsoleConflict.Units.Soldiers
 {
-    internal class Soldier : Unit, IHealthStrategy
+    internal class Soldier : Unit, IDamageble
     {
         private readonly Health _health;
-        private readonly IAttackStrategy _weapon;
+        private readonly IWeaponStrategy _weapon;
 
-        public Soldier(int health, IAttackStrategy weapon, List<IUnitComposite> parentComposite) : base(parentComposite)
+        public Soldier(int health, IWeaponStrategy weapon)
         {
             _health = new Health(health);
 
@@ -32,5 +33,8 @@ namespace ConsoleConflict.Units.Soldiers
             if (_health.Amount == 0)
                 GlobalKiller.Dead += Die;
         }
+
+        public override string GetInformation() =>
+            base.GetInformation() + $" health {Health} / {MaxHealth} ||";
     }
 }

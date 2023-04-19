@@ -1,10 +1,10 @@
-﻿using ConsoleConflict.Weapons;
+﻿using ConsoleConflict.Common.Weapons;
 
 namespace ConsoleConflict.Units.Soldiers
 {
     internal readonly struct SoldierConfig
     {
-        public SoldierConfig(int health, IAttackStrategy weapon)
+        public SoldierConfig(int health, WeaponTypes weapon)
         {
             Health = health;
             Weapon = weapon;
@@ -12,6 +12,6 @@ namespace ConsoleConflict.Units.Soldiers
 
         public int Health { get; }
 
-        public IAttackStrategy Weapon { get; }
+        public WeaponTypes Weapon { get; }
     }
 }

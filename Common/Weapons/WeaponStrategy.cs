@@ -1,10 +1,11 @@
-﻿using ConsoleConflict.Units;
-using ConsoleConflict.Units;
+﻿using ConsoleConflict.Common.Health;
+using ConsoleConflict.Common.Units;
+using System;
 
-namespace ConsoleConflict.Weapons
+namespace ConsoleConflict.Common.Weapons
 {
     // Стоит ли выделить оружие и стратегию в отдельные классы, если они не используются отдельно друг от друга?
-    internal class WeaponAttack : IAttackStrategy
+    internal class WeaponStrategy : IWeaponStrategy
     {
         private readonly int _damage;
         private readonly int _bulletsCapacity;
@@ -12,7 +13,7 @@ namespace ConsoleConflict.Weapons
         private int _bulletsInMagazine;
         private bool _isReloading;
 
-        public WeaponAttack(int damage, int capacity, bool isAutomatic)
+        public WeaponStrategy(int damage, int capacity, bool isAutomatic)
         {
             _damage = damage;
             _bulletsCapacity = capacity;
@@ -20,6 +21,8 @@ namespace ConsoleConflict.Weapons
 
             _isAutomatic = isAutomatic;
         }
+
+        public int Damage => _damage;
 
         private int BulletsAmount
         {
@@ -29,9 +32,13 @@ namespace ConsoleConflict.Weapons
                 _bulletsInMagazine = value;
 
                 if (_bulletsInMagazine > _bulletsCapacity)
+                {
                     _bulletsInMagazine = _bulletsCapacity;
+                }
                 else if (_bulletsInMagazine < 0)
+                {
                     _bulletsInMagazine = 0;
+                }
             }
         }
 
@@ -43,11 +50,15 @@ namespace ConsoleConflict.Weapons
                 return;
             }
 
-            IHealthStrategy damagebleEnemy = UnpackToDamagable(enemy);
-            Shoot(damagebleEnemy);
+            IDamageble? damagebleEnemy = UnpackToDamagable(enemy);
+
+            if (damagebleEnemy is not null)
+            {
+                Shoot(damagebleEnemy);
+            }
         }
 
-        private void Shoot(IHealthStrategy enemy)
+        private void Shoot(IDamageble enemy)
         {
             int automaticShotsQueue = 5;
             bool canShoot = false;
@@ -55,7 +66,9 @@ namespace ConsoleConflict.Weapons
             if (_isAutomatic == true)
             {
                 for (int i = 0; i < automaticShotsQueue; i++)
+                {
                     canShoot = ShootSingle(enemy);
+                }
             }
             else
             {
@@ -63,10 +76,12 @@ namespace ConsoleConflict.Weapons
             }
 
             if (canShoot == false)
+            {
                 _isReloading = true;
+            }
         }
 
-        private bool ShootSingle(IHealthStrategy enemy)
+        private bool ShootSingle(IDamageble enemy)
         {
 
             if (_bulletsInMagazine > 0)
@@ -83,23 +98,33 @@ namespace ConsoleConflict.Weapons
             int automaticReloadSize = 3;
 
             if (_isAutomatic == true)
+            {
                 BulletsAmount += automaticReloadSize;
+            }
             else if (_isReloading == true)
+            {
                 BulletsAmount++;
+            }
 
             if (BulletsAmount >= _bulletsCapacity)
+            {
                 _isReloading = false;
+            }
         }
 
-        private IHealthStrategy UnpackToDamagable(IUnitComposite composite)
+        private IDamageble? UnpackToDamagable(IUnitComposite composite)
         {
-            if (composite is IHealthStrategy damageble)
+            if (composite is IDamageble damageble)
             {
                 return damageble;
             }
+            else if (composite.UnitsSize == 0)
+            {
+                return null;
+            }
             else
             {
-                int targetIndex = Randomizer.GenerateNumber(0, composite.UnitsAmount);
+                int targetIndex = Random.Shared.Next(composite.Units.Count);
                 return UnpackToDamagable(composite.Units[targetIndex]);
             }
         }

@@ -1,4 +1,4 @@
-﻿namespace ConsoleConflict.Units
+﻿namespace ConsoleConflict.Common.Health
 {
     internal class Health
     {

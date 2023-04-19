@@ -1,6 +1,6 @@
-﻿namespace ConsoleConflict.Units
+﻿namespace ConsoleConflict.Common.Health
 {
-    internal interface IHealthStrategy
+    internal interface IDamageble
     {
         public int MaxHealth { get; }
 

@@ -1,4 +1,4 @@
-﻿namespace ConsoleConflict.Weapons
+﻿namespace ConsoleConflict.Common.Weapons
 {
     internal readonly struct WeaponConfig
     {
